@@ -20,6 +20,14 @@
 
 When an AI agent actuates a ventilator, infusion pump, or cardiac monitor, a wrong action is immediate physical harm, and a compliant model under clinical pressure will set whatever value it is told to. The device layer sits on the qfire actuation path after identity (quorum) and policy (quwarden): every DeviceCommand is checked against a version-pinned table of safe ranges, interlocks, and alarm parameters (devices.json, compiled into the binary), life-critical actuation always requires a human confirmation via the qutriage escalation transport, a broker-local fail-safe controller drives the device to its documented safe state on communication loss, and a run-length performance monitor flags sustained degradation. Driving 216 scenarios through a live llama3.1:8b agent, the unguarded agent puts the device into a physically unsafe state in 53.7% of cases; the broker reduces this to 0.0% (95% CI upper bound 1.7%; McNemar chi-squared 114.0) while preserving 94.4% of legitimate actions, and adds 0.05 us per command.
 
+<div align="center">
+
+[![Qubroker: Safe Agent Integration with Life-Critical Medical Devices (talk)](assets/qubroker-video.png)](https://youtu.be/RSp8ZQYy6Z8)
+
+**▶ Watch: [Qubroker: Safe Agent Integration with Life-Critical Medical Devices (talk)](https://youtu.be/RSp8ZQYy6Z8)**
+
+</div>
+
 `qubroker` is **a module of the QUOKKAGUARD program**: one Rust security gateway (`qfire`) that sits in front of any OpenAI-compatible model endpoint and decides **ALLOW ▸ forward · BLOCK ▸ refuse · ESCALATE ▸ human review** for every request and response. Each module adds exactly one enforcement layer to that gateway plus one adversarial dataset and one paper. This repository is a self-contained snapshot of the gateway with **this layer** (`src/device/`, on the *request* path, HAARF control C8.3/8.6/3.1), its dataset (**DeviceBench**), the experiment harness, and the paper.
 
 > **Needs a local model for some experiments.** Live runs go through [Ollama](https://ollama.com) on the OpenAI-compatible endpoint; no paid API keys are used anywhere in this repo.
